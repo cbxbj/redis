@@ -16,7 +16,7 @@ struct __attribute__ ((__packed__)) sdshdr8 {
 
 例如，一个包含字符串“name”的sds结构如下：
 
-![](img\Snipaste_2022-05-21_18-21-29.png)
+![](.\img\Snipaste_2022-05-21_18-21-29.png)
 
 ## 内存预分配
 
