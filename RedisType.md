@@ -26,9 +26,9 @@ update命令才会预分配(如:append),set命令只是覆盖
 
 ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-25-30.png)
 
-假如我们要给SDS**追加**一段字符串“,Amy”，这里首先会申请新内存空间：
+假如要给SDS**追加**一段字符串“,Amy”，这里首先会申请新内存空间：
 
-1. u如果新字符串小于1M，则新空间为扩展后字符串长度的两倍+1；
+1. 如果新字符串小于1M，则新空间为扩展后字符串长度的两倍+1；
 2. 如果新字符串大于1M，则新空间为扩展后字符串长度+1M+1。称为**内存预分配**
 
 ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-25-40.png)
@@ -796,7 +796,8 @@ void hsetCommand(client *c) {// hset user1 name Jack age 21
     hashTypeTryConversion(o,c->argv,2,c->argc-1);
     // 循环遍历每一对field和value，并执行hset命令
     for (i = 2; i < c->argc; i += 2)
-        created += !hashTypeSet(o,c->argv[i]->ptr,c->argv[i+1]->ptr,HASH_SET_COPY);    // 略 ...
+        created += !hashTypeSet(o,c->argv[i]->ptr,c->argv[i+1]->ptr,HASH_SET_COPY);
+    // 略 ...
 }
 ```
 
