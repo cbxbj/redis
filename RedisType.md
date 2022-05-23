@@ -24,14 +24,14 @@ update命令才会预分配(如:append),set命令只是覆盖
 
 目前有字符串
 
-![](img\Snipaste_2022-05-21_18-25-30.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-25-30.png)
 
 假如我们要给SDS**追加**一段字符串“,Amy”，这里首先会申请新内存空间：
 
 1. u如果新字符串小于1M，则新空间为扩展后字符串长度的两倍+1；
 2. 如果新字符串大于1M，则新空间为扩展后字符串长度+1M+1。称为**内存预分配**
 
-![](img\Snipaste_2022-05-21_18-25-40.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-25-40.png)
 
 ## 优点
 
@@ -68,7 +68,7 @@ typedef struct intset {
 
 数组内每个元素编码方式都是相同的
 
-![](\img\Snipaste_2022-05-21_18-41-08.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-41-08.png)
 
 寻址公式：startPtr + (sizeof(int16) * index)
 
@@ -78,7 +78,7 @@ contents的地址(第一个元素的地址)+元素编码方式所占用的字节
 
 假设有一个intset，元素为{5,10，20}，采用的编码是``INTSET_ENC_INT16``，则每个整数占2字节：
 
-![](\img\Snipaste_2022-05-21_18-45-15.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-45-15.png)
 
 向该其中添加一个数字：50000，这个数字超出了int16_t的范围，intset会自动**升级**编码方式到合适的大小
 
@@ -87,9 +87,9 @@ contents的地址(第一个元素的地址)+元素编码方式所占用的字节
 3. 将待添加的元素放入数组末尾
 4. 最后，将inset的encoding属性改为``INTSET_ENC_INT32``，将length属性改为4
 
-![](\img\Snipaste_2022-05-21_18-47-28.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-47-28.png)
 
-![](\img\Snipaste_2022-05-21_18-48-59.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_18-48-59.png)
 
 ```c
 intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
@@ -209,7 +209,7 @@ Dict中的HashTable就是**数组结合单向链表**的实现，当集合中元
 
 注：dict中的dictht ht[2];为2个数组，第二个rehash时使用
 
-![](\img\Snipaste_2022-05-21_19-14-09.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_19-14-09.png)
 
 每次新增键值对时都会检查**负载因子**（LoadFactor = used/size） ，满足以下两种情况时会触发**哈希表扩容**：
 
@@ -294,13 +294,13 @@ Dict的rehash是分多次、渐进式的完成，因此称为**渐进式rehash**
 
 ## 结构
 
-![](\img\Snipaste_2022-05-21_19-44-15.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_19-44-15.png)
 
-![](\img\Snipaste_2022-05-21_19-45-45.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_19-45-45.png)
 
 ZipList 中的**Entry**并不像普通链表那样记录前后节点的指针，因为记录两个指针要占用16个字节，浪费内存。而是采用了下面的结构：
 
-![](\img\Snipaste_2022-05-21_20-13-51.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-13-51.png)
 
 1. previous_entry_length：前一节点的长度，占1个或5个字节。
    1. 如果前一节点的长度小于254字节，则采用1个字节来保存这个长度值
@@ -314,19 +314,19 @@ ZipListEntry中的encoding编码分为字符串和整数两种：
 
 1. 字符串：如果encoding是以“00”、“01”或者“10”开头，则证明content是字符串
 
-   > ![](\img\Snipaste_2022-05-21_20-23-30.png)
+   > ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-23-30.png)
 
 2. 整数：如果encoding是以“11”开始，则证明content是整数，且encoding固定只占用1个字节
 
-   > ![](\img\Snipaste_2022-05-21_20-23-35.png)
+   > ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-23-35.png)
 
 例如，我们要保存字符串：“ab”和 “bc”
 
-![](\img\Snipaste_2022-05-21_20-23-40.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-23-40.png)
 
 例如，一个ZipList中包含两个整数值：“2”和“5”
 
-![](\img\Snipaste_2022-05-21_20-30-26.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-30-26.png)
 
 ## 连锁更新问题
 
@@ -337,11 +337,11 @@ ZipList的每个Entry都包含previous_entry_length来记录上一个节点的�
 
 假设有**N个连续的、长度为250~253字节之间的entry**，因此entry的**previous_entry_length**属性用**1个字节**即可表示，如图所示
 
-![](\img\Snipaste_2022-05-21_20-33-41.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-33-41.png)
 
 接着要在头插入一个254字节大小的Entry
 
-![](\img\Snipaste_2022-05-21_20-34-42.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-34-42.png)
 
 可以观察到，由于有**n个连续的长度为250的entry**
 
@@ -378,7 +378,7 @@ ZipList虽然节省内存，但申请内存必须是连续空间，如果内存�
 
 ## 结构
 
-![](\img\Snipaste_2022-05-21_20-47-50.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-47-50.png)
 
 ```c
 typedef struct quicklist {
@@ -408,7 +408,7 @@ typedef struct quicklistNode {
 } quicklistNode;
 ```
 
-![](\img\Snipaste_2022-05-21_20-57-35.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_20-57-35.png)
 
 ## 配置项
 
@@ -445,7 +445,7 @@ typedef struct quicklistNode {
 1. 元素按照升序排列存储
 2. 节点可能包含多个指针，指针跨度不同
 
-![](\img\Snipaste_2022-05-21_22-23-59.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_22-23-59.png)
 
 ```c
 // t_zset.c
@@ -469,7 +469,7 @@ typedef struct zskiplistNode {
 } zskiplistNode;
 ```
 
-![](\img\Snipaste_2022-05-21_22-32-17.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_22-32-17.png)
 
 ## 特点
 
@@ -499,11 +499,11 @@ typedef struct redisObject {
 
 ## 编码方式
 
-![](\img\Snipaste_2022-05-21_22-54-17.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_22-54-17.png)
 
 ## 数据结构
 
-![](\img\Snipaste_2022-05-21_22-56-18.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_22-56-18.png)
 
 #  String
 
@@ -513,13 +513,13 @@ typedef struct redisObject {
 
 其基本编码方式是**RAW**，基于简单动态字符串（SDS）实现，存储上限为512mb
 
-> ![](\img\Snipaste_2022-05-21_23-02-14.png)
+> ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_23-02-14.png)
 
 ## EMBSTR
 
 如果存储的SDS长度小于44字节，则会采用**EMBSTR**编码，此时object head与SDS是一段连续空间。申请内存时只需要调用一次内存分配函数，效率更高
 
-> ![](img\Snipaste_2022-05-21_23-04-22.png)
+> ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_23-04-22.png)
 >
 > 为什么是44字节？
 >
@@ -531,7 +531,7 @@ typedef struct redisObject {
 
 如果存储的字符串是整数值，并且大小在LONG_MAX范围内，则会采用**INT**编码：直接将数据保存在RedisObject的ptr指针位置（刚好8字节），不再需要SDS了
 
-> ![](\img\Snipaste_2022-05-21_23-11-20.png)
+> ![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-21_23-11-20.png)
 
 # List
 
@@ -584,7 +584,7 @@ robj *createQuicklistObject(void) {
 }
 ```
 
-![](\img\Snipaste_2022-05-22_21-50-27.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_21-50-27.png)
 
 # Set
 
@@ -630,15 +630,15 @@ robj *createSetObject(void) {
 
 ## Inset
 
-![](\img\Snipaste_2022-05-22_22-01-41.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-01-41.png)
 
 ## Inset-->Dict
 
-![](\img\Snipaste_2022-05-22_22-01-42.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-01-42.png)
 
 ## Dict
 
-![](\img\Snipaste_2022-05-22_22-03-12.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-03-12.png)
 
 # Zset
 
@@ -704,7 +704,7 @@ robj *createZsetZiplistObject(void) {
 }
 ```
 
-![](\img\Snipaste_2022-05-22_22-29-22.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-29-22.png)
 
 ## ZipList--->Dict&&SkipList
 
@@ -771,7 +771,7 @@ robj *createZsetObject(void) {
 }
 ```
 
-![](\img\Snipaste_2022-05-22_22-13-10.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-13-10.png)
 
 # Hash
 
@@ -784,7 +784,7 @@ Hash结构**默认采用ZipList**编码，用以节省内存。 ZipList中相邻
 
 ## ZipList
 
-![](\img\Snipaste_2022-05-22_22-33-16.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-33-16.png)
 
 ```c
 void hsetCommand(client *c) {// hset user1 name Jack age 21
@@ -889,4 +889,4 @@ int hashTypeSet(robj *o, sds field, sds value, int flags) {
 
 ## Dict
 
-![](\img\Snipaste_2022-05-22_22-34-15.png)
+![img](https://github.com/cbxbj/redis/blob/master/img/Snipaste_2022-05-22_22-34-15.png)
