@@ -193,6 +193,10 @@ typedef struct dictEntry {
 
 dictEntry存储在dictht的哪一个桶中算法与java中hashTable类似
 
+> 对key进行hash & sizemark
+
+Redis计算插槽
+
 > 对dictEntry的key进行CRC16计算
 >
 > 计算结果再&16383
